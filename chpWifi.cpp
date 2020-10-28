@@ -133,7 +133,7 @@ void startPage() {
 	Server.client().stop();
 }
 
-void esp_wifi_begin()
+void chp_wifi_begin()
 {
 	// Enable saved past credential by autoReconnect option,
 	// even once it is disconnected.
@@ -164,7 +164,7 @@ void esp_wifi_begin()
 	}
 }
 
-void esp_wifi_handle()
+void chp_wifi_handle()
 {
 	Portal.handleClient();
 }

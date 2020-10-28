@@ -1,5 +1,5 @@
-#ifndef ESP_WIFI
-#define ESP_WIFI
+#ifndef CHP_WIFI_H
+#define CHP_WIFI_H
 
 #include <ArduinoOTA.h>
 #include <PubSubClient.h>
@@ -61,8 +61,8 @@ String msg_construct(String payload);
 
 void rootPage();
 void startPage();
-void esp_wifi_begin();
-void esp_wifi_handle();
+void chp_wifi_begin();
+void chp_wifi_handle();
 
 #endif
 
