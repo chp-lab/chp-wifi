@@ -11,10 +11,27 @@
 #include <time.h>
 #include <AutoConnect.h>
 
+struct Mqtt_configs {
+   String	mqtt_server;
+   String	client_name;
+   String  mqtt_username;
+   String mqtt_password;
+   int	mqtt_port;
+   int	interval;
+};
+
+typedef struct Mqtt_configs Mqtt_config;
+
 void rootPage();
 void startPage();
 void chp_wifi_begin();
 void chp_wifi_handle();
+void EEPROM_write(int index, String text);
+String EEPROM_read(int index, int length);
+void Reset_EEPROM(boolean RESET_EEPROM);
+void dvSetup();
+void handleNetpie();
+Mqtt_config get_mqtt_config();
 
 #endif
 

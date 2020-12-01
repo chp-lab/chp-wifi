@@ -17,7 +17,7 @@
 #define MQTT_PASSWORD "atop3352"
 
 #define TOPIC "test/powermeter"
-#define MQTT_MAX_RECONNECT 5
+#define MQTT_MAX_RECONNECT 30
 #define NUM_PHASE 3
 #define INTERVAL 5*60*1000
 #define MAX_LEN 1000
@@ -59,6 +59,7 @@ void set_interval(unsigned long sch_t);
 String msg_construct(String payload);
 void sub_data(String topic);
 bool real_time_req();
-void set_mqtt(String m_server, int m_port, String m_clid, String m_uname, String m_pwd, int m_max_rec);
+void set_mqtt(String m_server, int m_port, String m_clid, String m_uname, String m_pwd);
+void use_saved_config();
 #endif
 

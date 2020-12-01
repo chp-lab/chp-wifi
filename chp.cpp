@@ -49,9 +49,9 @@ void pubData(String payload, String topic)
     
     payload.toCharArray(msg1, payload.length() + 1);
     topic.toCharArray(ch_topic, topic.length() + 1);
-    Serial.print("Publish message: ");
-    Serial.println(msg1);
-    Serial.println("-----");
+//    Serial.print("Publish message: ");
+//	  Serial.println(msg1);
+//    Serial.println("-----");
     
     mqtt.publish(ch_topic, msg1);
     delay(100);
@@ -66,6 +66,7 @@ void mqtt_connect()
   
   while(!mqtt.connect(client_name.c_str(), mqtt_username.c_str(), mqtt_password.c_str()))
   {
+  	chp_wifi_handle();
     Serial.print("*.");
     count = count + 1;
     if(count > mqtt_max_reconnect)
@@ -409,7 +410,7 @@ bool time_to_sync()
 {
 	if((millis() - last_sync) > sync_time)
 	{
-		Serial.println("Sync time");
+//		Serial.println("Sync time");
     	configTime(timezone, dst, "pool.ntp.org", "time.nist.gov");
     	last_sync = millis();
 		return true;
@@ -495,14 +496,30 @@ bool real_time_req()
 	return tmp_rt_req;
 }
 
-void set_mqtt(String m_server, int m_port, String m_clid, String m_uname, String m_pwd, int m_max_rec)
+void set_mqtt(String m_server, int m_port, String m_clid, String m_uname, String m_pwd)
 {
 	mqtt_server = m_server;
-	mqtt_port = m_port;
 	client_name = m_clid;
 	mqtt_username = m_uname;
 	mqtt_password = m_pwd;
-	mqtt_max_reconnect = m_max_rec;
+	mqtt_port = m_port;
+	
+	clid_flag = true;
+}
+
+void use_saved_config()
+{
+	Mqtt_config s_mqtt_config = get_mqtt_config();
+	
+	mqtt_server = s_mqtt_config.mqtt_server;
+	client_name = s_mqtt_config.client_name;
+	mqtt_username = s_mqtt_config.mqtt_username;
+	mqtt_password = s_mqtt_config.mqtt_password;
+	mqtt_port = s_mqtt_config.mqtt_port;
+	schedule = s_mqtt_config.interval*1000;
+	
+	Serial.println("### schedule=" + String(schedule));
+	
 	clid_flag = true;
 }
 
