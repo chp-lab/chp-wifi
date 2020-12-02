@@ -16,6 +16,7 @@ int index_secret     = 150;  int index_secret_end = 200;
 int index_port       = 200;  int index_port_end = 250;
 int index_interval   = 250;  int index_interval_end = 300;
 bool __eprm_flag = false;
+bool __mqtt_flag = false;
 
 AutoConnectAux    netpie("/netpie", "MQTT");   // Step #1 as the above procedure
 
@@ -90,6 +91,13 @@ static const Timezone_t TZ[] =
 
 void rootPage() 
 {
+  String __home_status = "Device disconnected, check Wi-Fi and MQTT setup!";
+  
+  if(__mqtt_flag)
+  {
+  	__home_status = "Device online";
+  }
+  
   String  content =
     "<html>"
     "<head>"
@@ -99,9 +107,9 @@ void rootPage()
     "</script>"
     "</head>"
     "<body>"
-    "<h2 align=\"center\" style=\"color:blue;margin:20px;\">GIANT AP</h2>"
+    "<h2 align=\"center\" style=\"color:blue;margin:20px;\">GIANT IoT</h2>"
     "<h3 align=\"center\" style=\"color:gray;margin:10px;\">{{DateTime}}</h3>"
-    "<p style=\"text-align:center;\">Reload the page to update the time.</p>"
+    "<p style=\"text-align:center;\">" + __home_status + "</p>"
     "<p></p><p style=\"padding-top:15px;text-align:center\">" AUTOCONNECT_LINK(COG_24) "</p>"
     "</body>"
     "</html>";
@@ -182,6 +190,14 @@ void chp_wifi_begin()
 	if (Portal.begin()) 
 	{
 		Serial.println("WiFi connected: " + WiFi.localIP().toString());
+		if (MDNS.begin(MDNS_URI)) 
+		{
+			MDNS.addService("http", "tcp", 80);
+		}
+		else
+		{
+			Serial.println("### MDNS failed");
+		}
 	}
 }
 
@@ -197,8 +213,6 @@ void EEPROM_write(int index, String text)
     EEPROM.put(i, text[i - index]);
   }
     EEPROM.commit();
-//    Serial.println("length value: "+String(text.length() + 1));
-//   return text.length() + 1;
 }
 
 String EEPROM_read(int index, int length) 
@@ -267,20 +281,6 @@ void dvSetup()
   EEPROM_write(index_secret, new_secret);
   EEPROM_write(index_port, new_port);
   EEPROM_write(index_interval, new_interval);
-
-//  Serial.println("server_uri=" + new_server_url);
-//  Serial.println("client_id=" + new_client_id);
-//  Serial.println("token=" + new_token);
-//  Serial.println("secret=" + new_secret);
-//  Serial.println("port=" + new_port);
-//  Serial.println("interval=" + new_interval);
-//  
-//  Serial.println("server_uri read: " + EEPROM_read(index_server_url, index_server_url_end));
-//  Serial.println("client_id read: " + EEPROM_read(index_client_id, index_client_id_end));
-//  Serial.println("token read: " + EEPROM_read(index_token, index_token_end));
-//  Serial.println("secret read: " + EEPROM_read(index_secret, index_secret_end));
-//  Serial.println("port read: " + EEPROM_read(index_port, index_port_end));
-//  Serial.println("interval read: " + EEPROM_read(index_interval, index_interval_end));
 }
 
 void handleNetpie() 
@@ -390,8 +390,11 @@ Mqtt_config get_mqtt_config()
 		EEPROM_write(index_interval, String(mqtt_config.interval));
 	}
 	
-	return mqtt_config;
-	
+	return mqtt_config;	
 }
 
+void set_mqtt_flag(bool __my_flag)
+{
+	__mqtt_flag = __my_flag;
+}
 

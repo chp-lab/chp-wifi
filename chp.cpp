@@ -29,6 +29,7 @@ String mqtt_password = MQTT_PASSWORD;
 int mqtt_max_reconnect = MQTT_MAX_RECONNECT;
 
 bool clid_flag = false;
+String ota_pwd = OTA_PWD;
 
 void callback(char* topic, byte* payload, unsigned int length) 
 {
@@ -66,6 +67,7 @@ void mqtt_connect()
   
   while(!mqtt.connect(client_name.c_str(), mqtt_username.c_str(), mqtt_password.c_str()))
   {
+  	set_mqtt_flag(false);
   	chp_wifi_handle();
     Serial.print("*.");
     count = count + 1;
@@ -76,6 +78,7 @@ void mqtt_connect()
     }
     delay(1000);
   }
+  set_mqtt_flag(true);
   Serial.println("Mqtt connected");
   mqtt.subscribe(TOPIC);
   String rt_topic = rt_key + "/" + device_id();
@@ -86,8 +89,8 @@ void mqtt_connect()
 void giantOta()
 {
     Serial.println("Starting ota...");
-    ArduinoOTA.setHostname(client_name.c_str());
-    ArduinoOTA.setPassword("admin");
+    ArduinoOTA.setHostname(get_client_name().c_str());
+    ArduinoOTA.setPassword(ota_pwd.c_str());
     ArduinoOTA.onStart([]() 
     {
       String type;
@@ -521,5 +524,10 @@ void use_saved_config()
 	Serial.println("### schedule=" + String(schedule));
 	
 	clid_flag = true;
+}
+
+void set_ota_pwd(String my_ota_pwd)
+{
+	ota_pwd = my_ota_pwd;
 }
 

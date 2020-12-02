@@ -17,7 +17,7 @@
 #define MQTT_PASSWORD "atop3352"
 
 #define TOPIC "test/powermeter"
-#define MQTT_MAX_RECONNECT 30
+#define MQTT_MAX_RECONNECT 60
 #define NUM_PHASE 3
 #define INTERVAL 5*60*1000
 #define MAX_LEN 1000
@@ -36,6 +36,7 @@
 #elif defined(ARDUINO_ARCH_ESP32)
 #define sudo_reboot() ESP.restart()
 #endif
+#define OTA_PWD "admin"
 
 void callback(char* topic, byte* payload, unsigned int length) ;
 void pubData(String payload, String topic);
