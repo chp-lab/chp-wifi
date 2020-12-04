@@ -30,18 +30,26 @@ int mqtt_max_reconnect = MQTT_MAX_RECONNECT;
 
 bool clid_flag = false;
 String ota_pwd = OTA_PWD;
+bool mqtt_reconnect_flag = false;
 
-void callback(char* topic, byte* payload, unsigned int length) 
+void set_callback(void (*func1)(char* topic, byte* payload, unsigned int length))
 {
-	payload[length] = '\0';
-	String topic_str = topic, payload_str = (char*)payload;
-	Serial.println("### [" + topic_str + "]: " + payload_str);
-	String rt_topic = rt_key + "/" + device_id();
-	if(topic_str == rt_topic)
-	{
-		rt_req = true;
-	}
+//	(*func1)();
+	mqtt.setCallback(func1);
 }
+
+//void callback(char* topic, byte* payload, unsigned int length) 
+//{
+//	payload[length] = '\0';
+//	String topic_str = topic, payload_str = (char*)payload;
+//	Serial.println("### [" + topic_str + "]: " + payload_str);
+//	String rt_topic = rt_key + "/" + device_id();
+//	
+//	if(topic_str == rt_topic)
+//	{
+//		rt_req = true;
+//	}
+//}
 
 void pubData(String payload, String topic)
 {
@@ -62,7 +70,7 @@ void mqtt_connect()
 {
   int count = 0;
   mqtt.setServer(mqtt_server.c_str(), mqtt_port);
-  mqtt.setCallback(callback);
+  
   Serial.println("Connecting to mqtt broker");
   
   while(!mqtt.connect(client_name.c_str(), mqtt_username.c_str(), mqtt_password.c_str()))
@@ -84,6 +92,9 @@ void mqtt_connect()
   String rt_topic = rt_key + "/" + device_id();
   Serial.println("rt_topic=" + rt_topic);
   sub_data(rt_topic);
+  mqtt_reconnect_flag = true;
+  
+//  mqtt.setCallback(callback);
 }
 
 void giantOta()
@@ -364,7 +375,6 @@ String get_time()
 
 void chp_init(bool en_log)
 {
-
 	randomSeed(analogRead(0));
   
 	Serial.println(MODEL_NAME);
@@ -407,6 +417,7 @@ void chp_init(bool en_log)
 //    	Serial.println("ts=" + String(i) + " " + get_time());
   	}
   	Serial.println("Success, waiting for schedule");
+  	mqtt_connect();
 }
 
 bool time_to_sync()
@@ -529,5 +540,12 @@ void use_saved_config()
 void set_ota_pwd(String my_ota_pwd)
 {
 	ota_pwd = my_ota_pwd;
+}
+
+bool mqtt_reconnect()
+{
+	bool tmp_flag = mqtt_reconnect_flag;
+	mqtt_reconnect_flag = false;
+	return tmp_flag;
 }
 

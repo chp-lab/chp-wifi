@@ -62,5 +62,7 @@ void sub_data(String topic);
 bool real_time_req();
 void set_mqtt(String m_server, int m_port, String m_clid, String m_uname, String m_pwd);
 void use_saved_config();
+void set_callback(void (*func1)(char* topic, byte* payload, unsigned int length));
+bool mqtt_reconnect();
 #endif
 

@@ -91,27 +91,32 @@ static const Timezone_t TZ[] =
 
 void rootPage() 
 {
-  String __home_status = "Device disconnected, check Wi-Fi and MQTT setup!";
-  
+  String __home_status = "<span class=\"ant-avatar ant-avatar-circle\" style=\"width: 20px; height: 20px; line-height: 20px; font-size: 18px; background-color:#909b8e;\"></span></span> Offline";;
+
   if(__mqtt_flag)
   {
-  	__home_status = "Device online";
+  	__home_status = "<span class=\"ant-avatar ant-avatar-circle\" style=\"width: 20px; height: 20px; line-height: 20px; font-size: 18px; background-color:#20d406;\"></span> Online";
+  
   }
   
   String  content =
     "<html>"
-    "<head>"
-    "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
-    "<script type=\"text/javascript\">"
-    "setTimeout(\"location.reload()\", 10000);"
-    "</script>"
-    "</head>"
-    "<body>"
-    "<h2 align=\"center\" style=\"color:blue;margin:20px;\">GIANT IoT</h2>"
-    "<h3 align=\"center\" style=\"color:gray;margin:10px;\">{{DateTime}}</h3>"
-    "<p style=\"text-align:center;\">" + __home_status + "</p>"
-    "<p></p><p style=\"padding-top:15px;text-align:center\">" AUTOCONNECT_LINK(COG_24) "</p>"
-    "</body>"
+      "<head>"
+          "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+          "<title>Dashboard</title>"
+          "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://portal.netpie.io/static/css/2.d4320d25.chunk.css\">"
+          "<link rel=\"styleshee\" type=\"text/css\" href=\"https://portal.netpie.io/static/css/2.d4320d25.chunk.css\">"
+          "<link rel=\"shortcut icon\" href=\"https://portal.netpie.io/netpie_logo.png\" data-rh=\"true\">"
+          "<script type=\"text/javascript\">"
+            "setTimeout(\"location.reload()\", 10000);"
+          "</script>"
+      "</head>"
+      "<body>"
+          "<h2 align=\"center\" style=\"color:blue;margin:20px;\">GIANT AP</h2>"
+          "<h3 align=\"center\" style=\"color:gray;margin:10px;\">{{DateTime}}</h3>"
+          "<p style=\"text-align:center;\">"+ __home_status +"</p>"
+          "<p></p><p style=\"padding-top:15px;text-align:center\">" AUTOCONNECT_LINK(COG_24) "</p>"
+      "</body>"
     "</html>";
   static const char *wd[7] = { "Sun","Mon","Tue","Wed","Thr","Fri","Sat" };
   struct tm *tm;
@@ -397,4 +402,5 @@ void set_mqtt_flag(bool __my_flag)
 {
 	__mqtt_flag = __my_flag;
 }
+
 
