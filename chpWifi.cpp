@@ -112,7 +112,7 @@ void rootPage()
           "</script>"
       "</head>"
       "<body>"
-          "<h2 align=\"center\" style=\"color:blue;margin:20px;\">GIANT AP</h2>"
+          "<h2 align=\"center\" style=\"color:blue;margin:20px;\">GIANT</h2>"
           "<h3 align=\"center\" style=\"color:gray;margin:10px;\">{{DateTime}}</h3>"
           "<p style=\"text-align:center;\">"+ __home_status +"</p>"
           "<p></p><p style=\"padding-top:15px;text-align:center\">" AUTOCONNECT_LINK(COG_24) "</p>"
@@ -213,19 +213,18 @@ void chp_wifi_handle()
 
 void EEPROM_write(int index, String text) 
 {
-  for (int i = index; i < text.length() + index; ++i) 
+  for (int i = index; i < text.length() + index; i++) 
   {
     EEPROM.put(i, text[i - index]);
   }
     EEPROM.commit();
 }
 
-String EEPROM_read(int index, int length) 
+String EEPROM_read(int index, int read_end) 
 {
-  String text = "";
-  char ch = 1;
-
-  for (int i = index; (i < (index + length)) && ch; ++i) {
+  String text;
+  char ch;
+  for (int i = index; i < read_end; i++) {
     if (ch = EEPROM.read(i)) {
       text.concat(ch);
     }
@@ -260,7 +259,10 @@ void dvSetup()
                                          "<head>"
                                          "<meta name='viewport' content='width=device-width,initial-scale=1.0'>"
                                          "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css\" integrity=\"sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2\" crossorigin=\"anonymous\">"
-                                         "</head>"
+                                         "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://portal.netpie.io/static/css/2.d4320d25.chunk.css\">"
+										 "<link rel=\"styleshee\" type=\"text/css\" href=\"https://portal.netpie.io/static/css/2.d4320d25.chunk.css\">"
+										 "<link rel=\"shortcut icon\" href=\"https://portal.netpie.io/netpie_logo.png\" data-rh=\"true\">"
+										 "</head>"
                                          "<body>"
                                              "<div class=\"container\">\n"
                                               "<div class=\"row\">"
@@ -309,7 +311,10 @@ void handleNetpie()
                                          "<head>"
                                          "<meta name='viewport' content='width=device-width,initial-scale=1.0'>"
                                          "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css\" integrity=\"sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2\" crossorigin=\"anonymous\">"
-                                         "</head>"
+                                         "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://portal.netpie.io/static/css/2.d4320d25.chunk.css\">"
+          								 "<link rel=\"styleshee\" type=\"text/css\" href=\"https://portal.netpie.io/static/css/2.d4320d25.chunk.css\">"
+          								 "<link rel=\"shortcut icon\" href=\"https://portal.netpie.io/netpie_logo.png\" data-rh=\"true\">"
+										 "</head>"
                                          "<script type=\"text/javascript\">"
                                           "console.log(\"test\");"
                                           "function confirmSubmit() {"

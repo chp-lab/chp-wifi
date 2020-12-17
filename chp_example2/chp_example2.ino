@@ -50,7 +50,7 @@ void setup() {
   pinMode(adc0_pin, INPUT);
   pinMode(relay0, OUTPUT);
 
-//  use_saved_config();
+  use_saved_config();
   set_ota_pwd("12345678");
   Serial.println("### Interval=" + String(get_interval()));
   chp_wifi_begin();
