@@ -14,6 +14,14 @@
 #include <AutoConnect.h>
 
 #define MDNS_URI "giant"
+#define URL_START 100
+#define URL_LEN 30
+#define CLID_LEN 50
+#define TOKEN_LEN 50
+#define SECRET_LEN 50
+#define PORT_LEN 5
+#define INTERVAL_LEN 10
+#define EEPROM_SIZE 512
 
 struct Mqtt_configs {
    String	mqtt_server;
@@ -32,7 +40,7 @@ void chp_wifi_begin();
 void chp_wifi_handle();
 void EEPROM_write(int index, String text);
 String EEPROM_read(int index, int length);
-void Reset_EEPROM(boolean RESET_EEPROM);
+void Reset_EEPROM();
 void dvSetup();
 void handleNetpie();
 Mqtt_config get_mqtt_config();

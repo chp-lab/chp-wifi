@@ -155,7 +155,7 @@ void giantOta()
 
 String get_client_name()
 {
-  String tmp_name = "device";
+  String tmp_name;
   int mac_len = 6;
 //  char buf[mac_len];
 
@@ -165,8 +165,10 @@ String get_client_name()
   for(int i = 0; i < mac_len; i++ )
   {
     char buf[6];
+//    Serial.println("mac[" + String(i) + "]=" + String(mac[i]));
     sprintf(buf, "%2X", mac[i]);
-    tmp_name = tmp_name + "_" + buf;
+    tmp_name = tmp_name + buf;
+    tmp_name.replace(" ", "0");
   }
 
   Serial.println(tmp_name);
@@ -368,9 +370,35 @@ String get_time()
 {
   time_t now = time(nullptr);
   struct tm* p_tm = localtime(&now);
+  String time_str = String(p_tm->tm_hour) + ":" + String(p_tm->tm_min) + ":" + String(p_tm->tm_sec);
+  Serial.println("Now:" + time_str);
   String cur_ts = String(now) + "000000000";
-  Serial.println("cur_ts=" + cur_ts);
+//  Serial.println("cur_ts=" + cur_ts);
   return cur_ts;
+}
+
+bool time_to_reboot(String reboot_time)
+{
+  time_t now = time(nullptr);
+  struct tm* p_tm = localtime(&now);
+  String time_str = String(p_tm->tm_hour) + ":" + String(p_tm->tm_min);
+//  Serial.println("Now:" + time_str);
+  
+  if(time_str == reboot_time)
+  {
+  	int tmp_i;
+    // wait until minute pass  
+    for(tmp_i = 60; tmp_i > 0; tmp_i--)
+    {
+      Serial.println("Reboot in..." + String(tmp_i) + " sec");
+      delay(1000);
+    }
+  	return true;
+  }
+  else
+  {
+  	return false;
+  }
 }
 
 void chp_init(bool en_log)
@@ -549,3 +577,7 @@ bool mqtt_reconnect()
 	return tmp_flag;
 }
 
+void reboot_now()
+{
+	sudo_reboot();
+}

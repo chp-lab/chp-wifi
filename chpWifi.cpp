@@ -9,12 +9,25 @@ WebServer Server;
 AutoConnect       Portal(Server);
 AutoConnectConfig Config;       // Enable autoReconnect supported on v0.9.4
 AutoConnectAux    Timezone;
-int index_server_url = 0;    int index_server_url_end = 50;
-int index_client_id  = 50;   int index_client_id_end = 100;
-int index_token      = 100;  int index_token_end = 150;
-int index_secret     = 150;  int index_secret_end = 200;
-int index_port       = 200;  int index_port_end = 250;
-int index_interval   = 250;  int index_interval_end = 300;
+
+int index_server_url = URL_START;    
+int index_server_url_end = index_server_url + URL_LEN;
+
+int index_client_id  = index_server_url_end;  
+int index_client_id_end = index_client_id + CLID_LEN;
+
+int index_token      = index_client_id_end;  
+int index_token_end = index_token + TOKEN_LEN;
+
+int index_secret     = index_token_end;  
+int index_secret_end = index_secret + SECRET_LEN;
+
+int index_port       = index_secret_end;  
+int index_port_end = index_port + PORT_LEN;
+
+int index_interval   = index_port_end;  
+int index_interval_end = index_interval + INTERVAL_LEN;
+
 bool __eprm_flag = false;
 bool __mqtt_flag = false;
 
@@ -229,20 +242,19 @@ String EEPROM_read(int index, int read_end)
       text.concat(ch);
     }
   }
+  text.replace("ÿ", "");
   return text;
 }
 
-void Reset_EEPROM(boolean RESET_EEPROM)
+void Reset_EEPROM()
 {
-  if ( RESET_EEPROM ) {
-    for (int i = 0; i < 512; i++) {
+    for (int i = URL_START; i < EEPROM_SIZE; i++) {
         EEPROM.put(i, 0);
     }
     if(EEPROM.commit()){
       Serial.println("Reset pass");
     }
     delay(500);
-  }
 }
 
 void dvSetup()
@@ -281,7 +293,7 @@ void dvSetup()
                                          "</html>"
                                        )));
 
-  Reset_EEPROM(true);
+  Reset_EEPROM();
   EEPROM_write(index_server_url, new_server_url);
   EEPROM_write(index_client_id, new_client_id);
   EEPROM_write(index_token, new_token);
@@ -299,12 +311,12 @@ void handleNetpie()
   String port = EEPROM_read(index_port, index_port_end);
   String interval = EEPROM_read(index_interval, index_interval_end);
   
-  if(server_url == "" ){server_url = "broker.netpie.io";}
-  if(Client_id == "" ){Client_id = "-";}
-  if(username == "" ){username = "-";}
-  if(password == "" ){password = "-";}
-  if(port == "" ){port = "1883";}
-  if(interval == "" ){interval = "60";}
+//  if(server_url == "" ){server_url = "broker.netpie.io";}
+//  if(Client_id == "" ){Client_id = "-";}
+//  if(username == "" ){username = "-";}
+//  if(password == "" ){password = "-";}
+//  if(port == "" ){port = "1883";}
+//  if(interval == "" ){interval = "60";}
 
   Server.send(200, "text/html", String(
                                          "<html>"

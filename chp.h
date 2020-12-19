@@ -64,5 +64,7 @@ void set_mqtt(String m_server, int m_port, String m_clid, String m_uname, String
 void use_saved_config();
 void set_callback(void (*func1)(char* topic, byte* payload, unsigned int length));
 bool mqtt_reconnect();
+bool time_to_reboot(String reboot_time);
+void reboot_now();
 #endif
 
