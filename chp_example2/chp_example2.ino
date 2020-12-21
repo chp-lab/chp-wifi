@@ -88,5 +88,11 @@ void loop() {
       set_callback(my_callback);
       sub_data(device_id() + "/myswitch");
    }
+   
+   if(time_to_reboot("14:50"))
+   {
+	  reboot_now();
+   }
+   
    delay(100);
 }
