@@ -38,19 +38,6 @@ void set_callback(void (*func1)(char* topic, byte* payload, unsigned int length)
 	mqtt.setCallback(func1);
 }
 
-//void callback(char* topic, byte* payload, unsigned int length) 
-//{
-//	payload[length] = '\0';
-//	String topic_str = topic, payload_str = (char*)payload;
-//	Serial.println("### [" + topic_str + "]: " + payload_str);
-//	String rt_topic = rt_key + "/" + device_id();
-//	
-//	if(topic_str == rt_topic)
-//	{
-//		rt_req = true;
-//	}
-//}
-
 void pubData(String payload, String topic)
 {
     char msg1[255];

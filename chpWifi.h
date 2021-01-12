@@ -46,6 +46,7 @@ void handleNetpie();
 Mqtt_config get_mqtt_config();
 void set_mqtt_flag(bool __my_flag);
 void set_ota_pwd(String my_ota_pwd);
+void connect_to_myap(String my_ssid, String my_password);
 
 #endif
 

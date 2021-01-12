@@ -1,4 +1,5 @@
 #include "chpWifi.h"
+#include <HTTPClient.h>
 
 #if defined(ARDUINO_ARCH_ESP8266)
 ESP8266WebServer Server;
@@ -76,30 +77,30 @@ typedef struct
 
 static const Timezone_t TZ[] = 
 {
-	{ "Europe/London", "europe.pool.ntp.org", 0 },
-	{ "Europe/Berlin", "europe.pool.ntp.org", 1 },
-	{ "Europe/Helsinki", "europe.pool.ntp.org", 2 },
-	{ "Europe/Moscow", "europe.pool.ntp.org", 3 },
-	{ "Asia/Dubai", "asia.pool.ntp.org", 4 },
-	{ "Asia/Karachi", "asia.pool.ntp.org", 5 },
-	{ "Asia/Dhaka", "asia.pool.ntp.org", 6 },
-	{ "Asia/Jakarta", "asia.pool.ntp.org", 7 },
-	{ "Asia/Manila", "asia.pool.ntp.org", 8 },
+//	{ "Europe/London", "europe.pool.ntp.org", 0 },
+//	{ "Europe/Berlin", "europe.pool.ntp.org", 1 },
+//	{ "Europe/Helsinki", "europe.pool.ntp.org", 2 },
+//	{ "Europe/Moscow", "europe.pool.ntp.org", 3 },
+//	{ "Asia/Dubai", "asia.pool.ntp.org", 4 },
+//	{ "Asia/Karachi", "asia.pool.ntp.org", 5 },
+//	{ "Asia/Dhaka", "asia.pool.ntp.org", 6 },
+//	{ "Asia/Jakarta", "asia.pool.ntp.org", 7 },
+//	{ "Asia/Manila", "asia.pool.ntp.org", 8 },
 	{ "Asia/Tokyo", "asia.pool.ntp.org", 9 },
-	{ "Australia/Brisbane", "oceania.pool.ntp.org", 10 },
-	{ "Pacific/Noumea", "oceania.pool.ntp.org", 11 },
-	{ "Pacific/Auckland", "oceania.pool.ntp.org", 12 },
-	{ "Atlantic/Azores", "europe.pool.ntp.org", -1 },
-	{ "America/Noronha", "south-america.pool.ntp.org", -2 },
-	{ "America/Araguaina", "south-america.pool.ntp.org", -3 },
-	{ "America/Blanc-Sablon", "north-america.pool.ntp.org", -4},
-	{ "America/New_York", "north-america.pool.ntp.org", -5 },
-	{ "America/Chicago", "north-america.pool.ntp.org", -6 },
-	{ "America/Denver", "north-america.pool.ntp.org", -7 },
-	{ "America/Los_Angeles", "north-america.pool.ntp.org", -8 },
-	{ "America/Anchorage", "north-america.pool.ntp.org", -9 },
-	{ "Pacific/Honolulu", "north-america.pool.ntp.org", -10 },
-	{ "Pacific/Samoa", "oceania.pool.ntp.org", -11 }
+//	{ "Australia/Brisbane", "oceania.pool.ntp.org", 10 },
+//	{ "Pacific/Noumea", "oceania.pool.ntp.org", 11 },
+//	{ "Pacific/Auckland", "oceania.pool.ntp.org", 12 },
+//	{ "Atlantic/Azores", "europe.pool.ntp.org", -1 },
+//	{ "America/Noronha", "south-america.pool.ntp.org", -2 },
+//	{ "America/Araguaina", "south-america.pool.ntp.org", -3 },
+//	{ "America/Blanc-Sablon", "north-america.pool.ntp.org", -4},
+//	{ "America/New_York", "north-america.pool.ntp.org", -5 },
+//	{ "America/Chicago", "north-america.pool.ntp.org", -6 },
+//	{ "America/Denver", "north-america.pool.ntp.org", -7 },
+//	{ "America/Los_Angeles", "north-america.pool.ntp.org", -8 },
+//	{ "America/Anchorage", "north-america.pool.ntp.org", -9 },
+//	{ "Pacific/Honolulu", "north-america.pool.ntp.org", -10 },
+//	{ "Pacific/Samoa", "oceania.pool.ntp.org", -11 }
 };
 
 void rootPage() 
@@ -172,11 +173,34 @@ void startPage()
 	Server.client().stop();
 }
 
+void connect_to_myap(String my_ssid, String my_password)
+{
+	Serial.println("Connecting to new ap...");
+	HTTPClient http;
+	String serverPath = "http://localhost/_ac/connect";
+	http.begin(serverPath.c_str());
+	http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+	String httpRequestData = "SSID=" + my_ssid + "&Passphrase=" + my_password + "&dhcp=en";
+	int httpResponseCode = http.POST(httpRequestData);
+	Serial.print("HTTP Response code: ");
+    Serial.println(httpResponseCode);
+	// Free resources
+	http.end();
+}
+
 void chp_wifi_begin()
 {
 	// Enable saved past credential by autoReconnect option,
 	// even once it is disconnected.
 	Config.autoReconnect = true;
+//	String ble_wifi_config = EEPROM_read(450, 500);
+//	if(ble_wifi_config != "")
+//	{
+//		Serial.println("!!! ble wifi config found!");
+//	}
+//	// Check any setting available
+//	Config.AutoConnectConfig("chp-lab", "qwer!@34");
+	
 	Portal.config(Config);
 	if(!__eprm_flag)
 	{
@@ -318,8 +342,7 @@ void handleNetpie()
 //  if(port == "" ){port = "1883";}
 //  if(interval == "" ){interval = "60";}
 
-  Server.send(200, "text/html", String(
-                                         "<html>"
+String tmp_netpie_str = "<html>"
                                          "<head>"
                                          "<meta name='viewport' content='width=device-width,initial-scale=1.0'>"
                                          "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css\" integrity=\"sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2\" crossorigin=\"anonymous\">"
@@ -374,8 +397,9 @@ void handleNetpie()
                                               "</div>"
                                         "</div>"
                                          "</body>"
-                                         "</html>"
-                                       ));
+                                         "</html>";
+
+  Server.send(200, "text/html", tmp_netpie_str);
 }
 
 Mqtt_config get_mqtt_config()
