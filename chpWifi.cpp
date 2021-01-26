@@ -1,5 +1,4 @@
 #include "chpWifi.h"
-#include <HTTPClient.h>
 
 #if defined(ARDUINO_ARCH_ESP8266)
 ESP8266WebServer Server;
@@ -122,14 +121,21 @@ void rootPage()
           "<link rel=\"styleshee\" type=\"text/css\" href=\"https://portal.netpie.io/static/css/2.d4320d25.chunk.css\">"
           "<link rel=\"shortcut icon\" href=\"https://portal.netpie.io/netpie_logo.png\" data-rh=\"true\">"
           "<script type=\"text/javascript\">"
-            "setTimeout(\"location.reload()\", 10000);"
+//            "setTimeout(\"location.reload()\", 60000);"
           "</script>"
       "</head>"
       "<body>"
           "<h2 align=\"center\" style=\"color:blue;margin:20px;\">GIANT</h2>"
           "<h3 align=\"center\" style=\"color:gray;margin:10px;\">{{DateTime}}</h3>"
           "<p style=\"text-align:center;\">"+ __home_status +"</p>"
-          "<p></p><p style=\"padding-top:15px;text-align:center\">" AUTOCONNECT_LINK(COG_24) "</p>"
+			"<form action=\"/_ac/connect\" align=\"center\" style=\"color:blue;margin:20px;>"
+			  "<label for=\"SSID\">SSID</label><br>"
+			  "<input type=\"text\" id=\"SSID\" name=\"SSID\" value=\"\"><br>"
+			  "<label for=\"Passphrase\">Password</Passphrase><br>"
+			  "<input type=\"text\" id=\"Passphrase\" name=\"Passphrase\" value=\"\"><br><br>"
+			  "<input type=\"submit\" value=\"Connect\">"
+			"</form>"
+			"<p></p><p style=\"padding-top:15px;text-align:center\">" AUTOCONNECT_LINK(COG_24) "</p>"
       "</body>"
     "</html>";
   static const char *wd[7] = { "Sun","Mon","Tue","Wed","Thr","Fri","Sat" };
@@ -175,6 +181,7 @@ void startPage()
 
 void connect_to_myap(String my_ssid, String my_password)
 {
+	#if defined(ARDUINO_ARCH_ESP32)
 	Serial.println("Connecting to new ap...");
 	HTTPClient http;
 	String serverPath = "http://localhost/_ac/connect";
@@ -186,6 +193,9 @@ void connect_to_myap(String my_ssid, String my_password)
     Serial.println(httpResponseCode);
 	// Free resources
 	http.end();
+	#elif defined(ARDUINO_ARCH_ESP8266)
+	Serial.println("esp8266 not support connect_to_myap!!");
+	#endif
 }
 
 void chp_wifi_begin()
@@ -229,10 +239,26 @@ void chp_wifi_begin()
 	
 	// Establish a connection with an autoReconnect option.
 	Serial.println("Connecting to WiFi...");
+//	digitalWrite(10, LOW);
 	if (Portal.begin()) 
 	{
 		Serial.println("WiFi connected: " + WiFi.localIP().toString());
-		if (MDNS.begin(MDNS_URI)) 
+		digitalWrite(10, HIGH);
+		String tmp_md_name;
+		byte tmp_mac[32]; 
+		WiFi.macAddress(tmp_mac);
+  		Serial.print("MAC: ");
+  		int mac_len = 6;
+  		for(int i = 0; i < mac_len; i++ )
+  		{
+    		char tmp_buf[mac_len];
+			//    Serial.println("mac[" + String(i) + "]=" + String(mac[i]));
+    		sprintf(tmp_buf, "%2X", tmp_mac[i]);
+    		tmp_md_name = tmp_md_name + tmp_buf;
+    		tmp_md_name.replace(" ", "0");
+  		}
+  		Serial.println(tmp_md_name);
+		if (MDNS.begin(tmp_md_name)) 
 		{
 			MDNS.addService("http", "tcp", 80);
 		}
@@ -241,6 +267,7 @@ void chp_wifi_begin()
 			Serial.println("### MDNS failed");
 		}
 	}
+//	digitalWrite(10, HIGH);
 }
 
 void chp_wifi_handle()

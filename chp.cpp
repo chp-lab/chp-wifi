@@ -59,9 +59,13 @@ void mqtt_connect()
   mqtt.setServer(mqtt_server.c_str(), mqtt_port);
   
   Serial.println("Connecting to mqtt broker");
+  // tempolary
+  
   
   while(!mqtt.connect(client_name.c_str(), mqtt_username.c_str(), mqtt_password.c_str()))
   {
+  	digitalWrite(10, LOW);
+  	
   	set_mqtt_flag(false);
   	chp_wifi_handle();
     Serial.print("*.");
@@ -71,7 +75,9 @@ void mqtt_connect()
         Serial.println("Internet connection failed, restarting device...");
         sudo_reboot();
     }
-    delay(1000);
+    delay(500);
+    digitalWrite(10, HIGH);
+    delay(500);
   }
   set_mqtt_flag(true);
   Serial.println("Mqtt connected");
@@ -567,4 +573,10 @@ bool mqtt_reconnect()
 void reboot_now()
 {
 	sudo_reboot();
+}
+
+bool connection_fail()
+{
+	// true = connection ok
+	return mqtt_reconnect_flag;
 }

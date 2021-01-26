@@ -9,6 +9,7 @@
 #include <WiFi.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
+#include <HTTPClient.h>
 #endif
 #include <time.h>
 #include <AutoConnect.h>
