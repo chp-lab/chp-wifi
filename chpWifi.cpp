@@ -258,7 +258,7 @@ void chp_wifi_begin()
     		tmp_md_name.replace(" ", "0");
   		}
   		Serial.println(tmp_md_name);
-		if (MDNS.begin(tmp_md_name)) 
+		if (MDNS.begin(tmp_md_name.c_str())) 
 		{
 			MDNS.addService("http", "tcp", 80);
 		}
