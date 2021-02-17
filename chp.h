@@ -11,7 +11,7 @@
 #define FW_VERSION "FW Version 1.1.0"
 #define WIFI_TIMEOUT 60*1000
 
-#define MQTT_SERVER "nexpie-giant.ddns.net"
+#define MQTT_SERVER "172.31.0.99"
 #define MQTT_PORT 1883
 #define MQTT_USERNAME "chp-lab"
 #define MQTT_PASSWORD "atop3352"
@@ -45,7 +45,7 @@ void giantOta();
 String get_client_name();
 String randomMessage();
 String uart_read();
-String influx_inline(String j_str);
+String influx_inline(String j_str, bool req_ts);
 String get_time();
 void chp_init(bool en_log);
 bool time_to_sync();
@@ -66,5 +66,6 @@ void set_callback(void (*func1)(char* topic, byte* payload, unsigned int length)
 bool mqtt_reconnect();
 bool time_to_reboot(String reboot_time);
 void reboot_now();
+String get_time_format();
 #endif
 

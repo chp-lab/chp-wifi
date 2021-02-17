@@ -22,6 +22,7 @@
 #define SECRET_LEN 50
 #define PORT_LEN 5
 #define INTERVAL_LEN 10
+#define ROOM_NUM_LEN 10
 #define EEPROM_SIZE 512
 
 struct Mqtt_configs {
@@ -48,6 +49,7 @@ Mqtt_config get_mqtt_config();
 void set_mqtt_flag(bool __my_flag);
 void set_ota_pwd(String my_ota_pwd);
 void connect_to_myap(String my_ssid, String my_password);
-
+String get_room_num();
+void set_broker_connection(String my_server_url, String my_client_id, String my_token, String my_secret, int my_port, int my_interval);
 #endif
 

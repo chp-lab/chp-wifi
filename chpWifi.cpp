@@ -6,8 +6,12 @@ ESP8266WebServer Server;
 WebServer Server;
 #endif
 
+const char* ap_ssid = "giant";
+const char* ap_pwd = "qwer!@34";
+const unsigned long ap_timeout = 3*60*1000;
+
 AutoConnect       Portal(Server);
-AutoConnectConfig Config;       // Enable autoReconnect supported on v0.9.4
+AutoConnectConfig Config(ap_ssid, ap_pwd, ap_timeout);       // Enable autoReconnect supported on v0.9.4
 AutoConnectAux    Timezone;
 
 int index_server_url = URL_START;    
@@ -27,6 +31,8 @@ int index_port_end = index_port + PORT_LEN;
 
 int index_interval   = index_port_end;  
 int index_interval_end = index_interval + INTERVAL_LEN;
+int index_room_num = index_interval_end;
+int index_room_num_end = index_room_num + ROOM_NUM_LEN;
 
 bool __eprm_flag = false;
 bool __mqtt_flag = false;
@@ -209,7 +215,7 @@ void chp_wifi_begin()
 //		Serial.println("!!! ble wifi config found!");
 //	}
 //	// Check any setting available
-//	Config.AutoConnectConfig("chp-lab", "qwer!@34");
+//	Config.AutoConnectConfig("giant", "qwer!@34");
 	
 	Portal.config(Config);
 	if(!__eprm_flag)
@@ -316,6 +322,7 @@ void dvSetup()
   String new_secret = Server.arg("secret");
   String new_port = Server.arg("port");
   String new_interval = Server.arg("interval");
+  String room_num = Server.arg("room_num");
 
   Server.send(200, "text/html", String(F(
                                          "<html>"
@@ -351,6 +358,7 @@ void dvSetup()
   EEPROM_write(index_secret, new_secret);
   EEPROM_write(index_port, new_port);
   EEPROM_write(index_interval, new_interval);
+  EEPROM_write(index_room_num, room_num);
 }
 
 void handleNetpie() 
@@ -361,6 +369,7 @@ void handleNetpie()
   String password = EEPROM_read(index_secret, index_secret_end);
   String port = EEPROM_read(index_port, index_port_end);
   String interval = EEPROM_read(index_interval, index_interval_end);
+  String room_num = get_room_num();
   
 //  if(server_url == "" ){server_url = "broker.netpie.io";}
 //  if(Client_id == "" ){Client_id = "-";}
@@ -413,7 +422,11 @@ String tmp_netpie_str = "<html>"
                                                                       "</div>"
                                                                       "<div class=\"form-group\">\n"
                                                                              "<label for=\"exampleFormControlInput1\">Interval(s)</label>\n"
-                                                                              "<input type=\"text\" id=\"interval\" name=\"interval\" value="+interval+" class=\"form-control\" aria-label=\"Sizing example input\" aria-describedby=\"inputGroup-sizing-sm\" maxlength=\"50\" required>"
+                                                                             "<input type=\"text\" id=\"interval\" name=\"interval\" value="+interval+" class=\"form-control\" aria-label=\"Sizing example input\" aria-describedby=\"inputGroup-sizing-sm\" maxlength=\"50\" required>"
+                                                                      "</div>"
+                                                                      "<div class=\"form-group\">\n"
+                                                                             "<label for=\"exampleFormControlInput1\">Room number</label>\n"
+                                                                             "<input type=\"text\" id=\"room_num\" name=\"room_num\" value="+room_num+" class=\"form-control\" aria-label=\"Sizing example input\" aria-describedby=\"inputGroup-sizing-sm\" maxlength=\"50\" required>"
                                                                       "</div>"
                                                                       "<div class=\"d-flex justify-content-center\">"
                                                                           "<input type=\"button\" value=\"Save\" onclick=\"confirmSubmit()\" class=\"btn btn-primary\">"
@@ -469,6 +482,23 @@ Mqtt_config get_mqtt_config()
 void set_mqtt_flag(bool __my_flag)
 {
 	__mqtt_flag = __my_flag;
+}
+
+String get_room_num()
+{
+	String tmp_r_num = EEPROM_read(index_room_num, index_room_num_end);
+	return tmp_r_num;
+}
+
+void set_broker_connection(String my_server_url, String my_client_id, String my_token, String my_secret, int my_port, int my_interval)
+{
+	Reset_EEPROM();
+	EEPROM_write(index_server_url, my_server_url);
+	EEPROM_write(index_client_id, my_client_id);
+	EEPROM_write(index_token, my_token);
+	EEPROM_write(index_secret, my_secret);
+	EEPROM_write(index_port, String(my_port));
+	EEPROM_write(index_interval, String(my_interval));
 }
 
 

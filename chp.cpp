@@ -58,7 +58,7 @@ void mqtt_connect()
   int count = 0;
   mqtt.setServer(mqtt_server.c_str(), mqtt_port);
   
-  Serial.println("Connecting to mqtt broker");
+  Serial.println("Connecting to mqtt broker: " + mqtt_server);
   // tempolary
   
   
@@ -281,7 +281,7 @@ String uart_read()
 }
 #endif
 
-String influx_inline(String j_str)
+String influx_inline(String j_str, bool req_ts)
 {
 	// deserialize json data from uart
 //  StaticJsonDocument<2000> doc;
@@ -351,10 +351,15 @@ String influx_inline(String j_str)
 //    Serial.println("E[" + String(i) + "]=" + String(E[i]));
   }
 
-  String ts = get_time();
   String influx_msg = meter_id + ",location=" + location + " V0=" + String(V[0]) + ",V1=" + String(V[1]) + ",V2=" + String(V[2]) + ",I0=" + String(I[0]) + ",I1=" + String(I[1]) + ",I2=" + String(I[2]) + \
   ",pf0=" + String(pf[0]) + ",pf1=" + String(pf[1]) + ",pf2=" + String(pf[2]) + ",P0=" + String(P[0]) + ",P1=" + String(P[1]) + ",P2=" + String(P[2]) + ",f0=" + String(f[0]) + ",f1=" + String(f[1]) + ",f2=" + String(f[2]) + \
-  ",E0=" + String(E[0]) + ",E1=" + String(E[1]) + ",E2=" + String(E[2]) + " " + ts;
+  ",E0=" + String(E[0]) + ",E1=" + String(E[1]) + ",E2=" + String(E[2]);
+  
+  if(req_ts)
+  {
+  	String ts = get_time();
+  	influx_msg = influx_msg + " " + ts;
+  }
 //  Serial.println("influx_msg=" + influx_msg);
   return influx_msg;
 }
@@ -368,6 +373,14 @@ String get_time()
   String cur_ts = String(now) + "000000000";
 //  Serial.println("cur_ts=" + cur_ts);
   return cur_ts;
+}
+
+String get_time_format()
+{
+  time_t now = time(nullptr);
+  struct tm* p_tm = localtime(&now);
+  String time_str = String(p_tm->tm_hour) + ":" + String(p_tm->tm_min) + ":" + String(p_tm->tm_sec);
+  return time_str;	
 }
 
 bool time_to_reboot(String reboot_time)
@@ -545,14 +558,41 @@ void set_mqtt(String m_server, int m_port, String m_clid, String m_uname, String
 void use_saved_config()
 {
 	Mqtt_config s_mqtt_config = get_mqtt_config();
-	
 	mqtt_server = s_mqtt_config.mqtt_server;
+	Serial.println("mqtt_server=" + mqtt_server);
 	client_name = s_mqtt_config.client_name;
+//	if(client_name == "")
+//	{
+//		client_name = get_client_name();
+//	}
 	mqtt_username = s_mqtt_config.mqtt_username;
+//	if(mqtt_username == "")
+//	{
+//		mqtt_username = "chp-lab";
+//	}
 	mqtt_password = s_mqtt_config.mqtt_password;
+//	Serial.println("mqtt_password=" + mqtt_password);
+//	if(mqtt_password == "")
+//	{
+//		mqtt_password == "atop3352";
+//	}
 	mqtt_port = s_mqtt_config.mqtt_port;
-	schedule = s_mqtt_config.interval*1000;
+//	if(mqtt_port == 0)
+//	{
+//		mqtt_port = 1883;
+//	}
+//	if(s_mqtt_config.interval == 0)
+//	{
+//		s_mqtt_config.interval = 60;
+//	}
 	
+//	if(mqtt_server = "")
+//	{
+//		mqtt_server = "18.140.173.239";
+//		Serial.println("Set default configuration!");
+//		set_broker_connection(mqtt_server, client_name, mqtt_username, mqtt_password, mqtt_port, s_mqtt_config.interval);
+//	}
+	schedule = s_mqtt_config.interval*1000;
 	Serial.println("### schedule=" + String(schedule));
 	
 	clid_flag = true;
