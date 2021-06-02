@@ -1,5 +1,21 @@
 #include "chpWifi.h"
 
+static const char PAGE_AUTH[] PROGMEM = R"(
+{
+  "uri": "/auth",
+  "title": "Auth",
+  "menu": true,
+  "element": [
+    {
+      "name": "text",
+      "type": "ACText",
+      "value": "AutoConnect has authorized",
+      "style": "font-family:Arial;font-size:18px;font-weight:400;color:#191970"
+    }
+  ]
+}
+)";
+
 #if defined(ARDUINO_ARCH_ESP8266)
 ESP8266WebServer Server;
 #elif defined(ARDUINO_ARCH_ESP32)
@@ -8,7 +24,7 @@ WebServer Server;
 
 const char* ap_ssid = "giant";
 const char* ap_pwd = "qwer!@34";
-const unsigned long ap_timeout = 3*60*1000;
+const unsigned long ap_timeout = 5*60*1000;
 
 AutoConnect       Portal(Server);
 AutoConnectConfig Config(ap_ssid, ap_pwd, ap_timeout);       // Enable autoReconnect supported on v0.9.4
@@ -82,30 +98,30 @@ typedef struct
 
 static const Timezone_t TZ[] = 
 {
-//	{ "Europe/London", "europe.pool.ntp.org", 0 },
-//	{ "Europe/Berlin", "europe.pool.ntp.org", 1 },
-//	{ "Europe/Helsinki", "europe.pool.ntp.org", 2 },
-//	{ "Europe/Moscow", "europe.pool.ntp.org", 3 },
-//	{ "Asia/Dubai", "asia.pool.ntp.org", 4 },
-//	{ "Asia/Karachi", "asia.pool.ntp.org", 5 },
-//	{ "Asia/Dhaka", "asia.pool.ntp.org", 6 },
-//	{ "Asia/Jakarta", "asia.pool.ntp.org", 7 },
-//	{ "Asia/Manila", "asia.pool.ntp.org", 8 },
+	{ "Europe/London", "europe.pool.ntp.org", 0 },
+	{ "Europe/Berlin", "europe.pool.ntp.org", 1 },
+	{ "Europe/Helsinki", "europe.pool.ntp.org", 2 },
+	{ "Europe/Moscow", "europe.pool.ntp.org", 3 },
+	{ "Asia/Dubai", "asia.pool.ntp.org", 4 },
+	{ "Asia/Karachi", "asia.pool.ntp.org", 5 },
+	{ "Asia/Dhaka", "asia.pool.ntp.org", 6 },
+	{ "Asia/Jakarta", "asia.pool.ntp.org", 7 },
+	{ "Asia/Manila", "asia.pool.ntp.org", 8 },
 	{ "Asia/Tokyo", "asia.pool.ntp.org", 9 },
-//	{ "Australia/Brisbane", "oceania.pool.ntp.org", 10 },
-//	{ "Pacific/Noumea", "oceania.pool.ntp.org", 11 },
-//	{ "Pacific/Auckland", "oceania.pool.ntp.org", 12 },
-//	{ "Atlantic/Azores", "europe.pool.ntp.org", -1 },
-//	{ "America/Noronha", "south-america.pool.ntp.org", -2 },
-//	{ "America/Araguaina", "south-america.pool.ntp.org", -3 },
-//	{ "America/Blanc-Sablon", "north-america.pool.ntp.org", -4},
-//	{ "America/New_York", "north-america.pool.ntp.org", -5 },
-//	{ "America/Chicago", "north-america.pool.ntp.org", -6 },
-//	{ "America/Denver", "north-america.pool.ntp.org", -7 },
-//	{ "America/Los_Angeles", "north-america.pool.ntp.org", -8 },
-//	{ "America/Anchorage", "north-america.pool.ntp.org", -9 },
-//	{ "Pacific/Honolulu", "north-america.pool.ntp.org", -10 },
-//	{ "Pacific/Samoa", "oceania.pool.ntp.org", -11 }
+	{ "Australia/Brisbane", "oceania.pool.ntp.org", 10 },
+	{ "Pacific/Noumea", "oceania.pool.ntp.org", 11 },
+	{ "Pacific/Auckland", "oceania.pool.ntp.org", 12 },
+	{ "Atlantic/Azores", "europe.pool.ntp.org", -1 },
+	{ "America/Noronha", "south-america.pool.ntp.org", -2 },
+	{ "America/Araguaina", "south-america.pool.ntp.org", -3 },
+	{ "America/Blanc-Sablon", "north-america.pool.ntp.org", -4},
+	{ "America/New_York", "north-america.pool.ntp.org", -5 },
+	{ "America/Chicago", "north-america.pool.ntp.org", -6 },
+	{ "America/Denver", "north-america.pool.ntp.org", -7 },
+	{ "America/Los_Angeles", "north-america.pool.ntp.org", -8 },
+	{ "America/Anchorage", "north-america.pool.ntp.org", -9 },
+	{ "Pacific/Honolulu", "north-america.pool.ntp.org", -10 },
+	{ "Pacific/Samoa", "oceania.pool.ntp.org", -11 }
 };
 
 void rootPage() 
@@ -209,6 +225,12 @@ void chp_wifi_begin()
 	// Enable saved past credential by autoReconnect option,
 	// even once it is disconnected.
 	Config.autoReconnect = true;
+//	Config.portalTimeout = 3000;
+	/*Http Authentication*/
+	Config.auth = AC_AUTH_DIGEST;
+	Config.authScope = AC_AUTHSCOPE_PORTAL;
+	Config.username = "admin";
+	Config.password = "atop3352";
 //	String ble_wifi_config = EEPROM_read(450, 500);
 //	if(ble_wifi_config != "")
 //	{
@@ -218,6 +240,7 @@ void chp_wifi_begin()
 //	Config.AutoConnectConfig("giant", "qwer!@34");
 	
 	Portal.config(Config);
+	Portal.load(FPSTR(PAGE_AUTH));
 	if(!__eprm_flag)
 	{
 		EEPROM.begin(512);
@@ -272,6 +295,11 @@ void chp_wifi_begin()
 		{
 			Serial.println("### MDNS failed");
 		}
+	}
+	else
+	{
+		Serial.println("Portal begin failed, end the portal");
+		Portal.end();
 	}
 //	digitalWrite(10, HIGH);
 }
