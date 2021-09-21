@@ -229,8 +229,8 @@ void chp_wifi_begin()
 	/*Http Authentication*/
 	Config.auth = AC_AUTH_DIGEST;
 	Config.authScope = AC_AUTHSCOPE_PORTAL;
-	Config.username = "admin";
-	Config.password = "atop3352";
+//	Config.username = "admin";
+//	Config.password = "123454";
 //	String ble_wifi_config = EEPROM_read(450, 500);
 //	if(ble_wifi_config != "")
 //	{
@@ -240,7 +240,7 @@ void chp_wifi_begin()
 //	Config.AutoConnectConfig("giant", "qwer!@34");
 	
 	Portal.config(Config);
-	Portal.load(FPSTR(PAGE_AUTH));
+//	Portal.load(FPSTR(PAGE_AUTH));
 	if(!__eprm_flag)
 	{
 		EEPROM.begin(512);

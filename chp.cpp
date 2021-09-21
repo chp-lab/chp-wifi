@@ -82,6 +82,7 @@ void mqtt_connect()
   set_mqtt_flag(true);
   Serial.println("Mqtt connected");
   mqtt.subscribe(TOPIC);
+  
   String rt_topic = rt_key + "/" + device_id();
   Serial.println("rt_topic=" + rt_topic);
   sub_data(rt_topic);

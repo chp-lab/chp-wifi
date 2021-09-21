@@ -16,7 +16,7 @@
 #define MQTT_USERNAME "chp-lab"
 #define MQTT_PASSWORD "atop3352"
 
-#define TOPIC "test/powermeter"
+#define TOPIC "@msg/set/status/5-0_HDY"
 #define MQTT_MAX_RECONNECT 30
 #define NUM_PHASE 3
 #define INTERVAL 5*60*1000
