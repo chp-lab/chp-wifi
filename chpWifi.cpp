@@ -229,8 +229,8 @@ void chp_wifi_begin()
 	/*Http Authentication*/
 	Config.auth = AC_AUTH_DIGEST;
 	Config.authScope = AC_AUTHSCOPE_PORTAL;
-//	Config.username = "admin";
-//	Config.password = "123454";
+	Config.username = "admin";
+	Config.password = "123454";
 //	String ble_wifi_config = EEPROM_read(450, 500);
 //	if(ble_wifi_config != "")
 //	{
