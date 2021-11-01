@@ -1,20 +1,20 @@
 #include "chpWifi.h"
 
-static const char PAGE_AUTH[] PROGMEM = R"(
-{
-  "uri": "/auth",
-  "title": "Auth",
-  "menu": true,
-  "element": [
-    {
-      "name": "text",
-      "type": "ACText",
-      "value": "AutoConnect has authorized",
-      "style": "font-family:Arial;font-size:18px;font-weight:400;color:#191970"
-    }
-  ]
-}
-)";
+//static const char PAGE_AUTH[] PROGMEM = R"(
+//{
+//  "uri": "/auth",
+//  "title": "Auth",
+//  "menu": true,
+//  "element": [
+//    {
+//      "name": "text",
+//      "type": "ACText",
+//      "value": "AutoConnect has authorized",
+//      "style": "font-family:Arial;font-size:18px;font-weight:400;color:#191970"
+//    }
+//  ]
+//}
+//)";
 
 #if defined(ARDUINO_ARCH_ESP8266)
 ESP8266WebServer Server;
@@ -227,10 +227,10 @@ void chp_wifi_begin()
 	Config.autoReconnect = true;
 //	Config.portalTimeout = 3000;
 	/*Http Authentication*/
-	Config.auth = AC_AUTH_DIGEST;
-	Config.authScope = AC_AUTHSCOPE_PORTAL;
-	Config.username = "admin";
-	Config.password = "123454";
+//	Config.auth = AC_AUTH_DIGEST;
+//	Config.authScope = AC_AUTHSCOPE_PORTAL;
+//	Config.username = "admin";
+//	Config.password = "123454";
 //	String ble_wifi_config = EEPROM_read(450, 500);
 //	if(ble_wifi_config != "")
 //	{

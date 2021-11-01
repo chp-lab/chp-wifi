@@ -371,7 +371,8 @@ String get_time()
   struct tm* p_tm = localtime(&now);
   String time_str = String(p_tm->tm_hour) + ":" + String(p_tm->tm_min) + ":" + String(p_tm->tm_sec);
   Serial.println("Now:" + time_str);
-  String cur_ts = String(now) + "000000000";
+  
+  String cur_ts = String(now + 7*60*60) + "000000000";
 //  Serial.println("cur_ts=" + cur_ts);
   return cur_ts;
 }
@@ -382,6 +383,49 @@ String get_time_format()
   struct tm* p_tm = localtime(&now);
   String time_str = String(p_tm->tm_hour) + ":" + String(p_tm->tm_min) + ":" + String(p_tm->tm_sec);
   return time_str;	
+}
+
+String get_date_fmrt()
+{
+	time_t now = time(nullptr);
+	struct tm* p_tm = localtime(&now);
+	int day, month, year;
+	String day_str, month_str, year_str;
+	 
+	day = p_tm->tm_mday;
+	month = p_tm->tm_mon + 1;
+	year = p_tm->tm_year + 1900;
+	
+	if(day < 10)
+	{
+		day_str = "0" + String(day);
+	}
+	else
+	{
+		day_str = String(day);
+	}
+	
+	if(month < 10)
+	{
+		month_str = "0" + String(month);
+	}
+	else
+	{
+		month_str = String(month);
+	}
+	
+	year_str = String(year);
+	
+	String date_str = year_str + "-" + month_str + "-" + day_str;
+	return date_str;
+}
+
+int get_days()
+{
+	time_t now = time(nullptr);
+	struct tm* p_tm = localtime(&now);
+	int day = p_tm->tm_mday;
+	return day;
 }
 
 bool time_to_reboot(String reboot_time)
@@ -488,7 +532,7 @@ void chp_loop()
 
 bool time_to_send()
 {
-	if((abs(time_elapsed) > schedule) || start_up)
+	if((time_elapsed > schedule) || start_up)
 	{
 		start_up = false;
 //		Serial.println("Time elapsed=" + String(time_elapsed));

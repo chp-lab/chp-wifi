@@ -11,7 +11,8 @@
 #define FW_VERSION "FW Version 1.1.0"
 #define WIFI_TIMEOUT 60*1000
 
-#define MQTT_SERVER "172.31.0.99"
+//#define MQTT_SERVER "172.31.0.99"
+#define MQTT_SERVER "18.140.173.239"
 #define MQTT_PORT 1883
 #define MQTT_USERNAME "chp-lab"
 #define MQTT_PASSWORD "atop3352"
@@ -67,5 +68,7 @@ bool mqtt_reconnect();
 bool time_to_reboot(String reboot_time);
 void reboot_now();
 String get_time_format();
+String get_date_fmrt();
+int get_days();
 #endif
 
