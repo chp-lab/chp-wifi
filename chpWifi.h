@@ -22,7 +22,7 @@
 #define SECRET_LEN 50
 #define PORT_LEN 5
 #define INTERVAL_LEN 10
-#define ROOM_NUM_LEN 10
+#define ROOM_NUM_LEN 32
 #define EEPROM_SIZE 512
 
 struct Mqtt_configs {

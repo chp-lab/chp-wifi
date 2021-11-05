@@ -18,7 +18,7 @@
 #define MQTT_PASSWORD "atop3352"
 
 #define TOPIC "@msg/set/status/GfdHrdhgfIBMKGXBZt6nXkcw"
-#define MQTT_MAX_RECONNECT 30
+#define MQTT_MAX_RECONNECT 3
 #define NUM_PHASE 3
 #define INTERVAL 5*60*1000
 #define MAX_LEN 1000
@@ -70,5 +70,6 @@ void reboot_now();
 String get_time_format();
 String get_date_fmrt();
 int get_days();
+int get_wifi_rssi();
 #endif
 

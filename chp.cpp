@@ -40,13 +40,17 @@ void set_callback(void (*func1)(char* topic, byte* payload, unsigned int length)
 
 void pubData(String payload, String topic)
 {
-    char msg1[255];
-    char ch_topic[32];
+    char msg1[512];
+    char ch_topic[255];
+    
+//    Serial.println("Raw Msg->topic:" + topic + ", payload:" + payload);
+//    Serial.println("topic_len:" + String(topic.length()) + ", msg_len:" + String(payload.length()));
     
     payload.toCharArray(msg1, payload.length() + 1);
     topic.toCharArray(ch_topic, topic.length() + 1);
 //    Serial.print("Publish message: ");
-//	  Serial.println(msg1);
+//    Serial.println(ch_topic);
+//	Serial.println(msg1);
 //    Serial.println("-----");
     
     mqtt.publish(ch_topic, msg1);
@@ -64,8 +68,8 @@ void mqtt_connect()
   
   while(!mqtt.connect(client_name.c_str(), mqtt_username.c_str(), mqtt_password.c_str()))
   {
+  	get_wifi_rssi();
   	digitalWrite(10, LOW);
-  	
   	set_mqtt_flag(false);
   	chp_wifi_handle();
     Serial.print("*.");
@@ -75,9 +79,9 @@ void mqtt_connect()
         Serial.println("Internet connection failed, restarting device...");
         sudo_reboot();
     }
-    delay(500);
+    delay(5000);
     digitalWrite(10, HIGH);
-    delay(500);
+    delay(5000);
   }
   set_mqtt_flag(true);
   Serial.println("Mqtt connected");
@@ -665,3 +669,11 @@ bool connection_fail()
 	// true = connection ok
 	return mqtt_reconnect_flag;
 }
+
+int get_wifi_rssi()
+{
+    Serial.print("RRSI: ");
+    Serial.println(WiFi.RSSI());	
+    return WiFi.RSSI();
+}
+
