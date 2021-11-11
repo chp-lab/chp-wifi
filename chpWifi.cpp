@@ -24,7 +24,7 @@ WebServer Server;
 
 const char* ap_ssid = "giant";
 const char* ap_pwd = "qwer!@34";
-const unsigned long ap_timeout = 10*60*1000;
+const unsigned long ap_timeout = 1*60*1000;
 
 AutoConnect       Portal(Server);
 AutoConnectConfig Config(ap_ssid, ap_pwd, ap_timeout);       // Enable autoReconnect supported on v0.9.4
