@@ -304,8 +304,9 @@ void chp_wifi_begin()
 	}
 	else
 	{
-		Serial.println("Portal begin failed, end the portal");
+		Serial.println("Portal begin failed, end the portal!");
 		Portal.end();
+		sudo_reboot();
 	}
 //	digitalWrite(10, HIGH);
 }

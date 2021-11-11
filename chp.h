@@ -32,11 +32,6 @@
 
 #define RT_TOPIC "rt_req"
 
-#if defined(ARDUINO_ARCH_ESP8266)
-#define sudo_reboot() ESP.reset()
-#elif defined(ARDUINO_ARCH_ESP32)
-#define sudo_reboot() ESP.restart()
-#endif
 #define OTA_PWD "admin"
 
 void callback(char* topic, byte* payload, unsigned int length) ;

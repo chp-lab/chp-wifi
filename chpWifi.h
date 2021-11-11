@@ -26,6 +26,12 @@
 #define EEPROM_SIZE 512
 #define  MODE_PIN 19
 
+#if defined(ARDUINO_ARCH_ESP8266)
+#define sudo_reboot() ESP.reset()
+#elif defined(ARDUINO_ARCH_ESP32)
+#define sudo_reboot() ESP.restart()
+#endif
+
 struct Mqtt_configs {
    String	mqtt_server;
    String	client_name;
