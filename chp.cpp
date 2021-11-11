@@ -64,7 +64,7 @@ void mqtt_connect()
   
   Serial.println("Connecting to mqtt broker: " + mqtt_server);
   // tempolary
-  
+  change_to_scanner(true);
   
   while(!mqtt.connect(client_name.c_str(), mqtt_username.c_str(), mqtt_password.c_str()))
   {
@@ -91,6 +91,10 @@ void mqtt_connect()
   Serial.println("rt_topic=" + rt_topic);
   sub_data(rt_topic);
   mqtt_reconnect_flag = true;
+  
+  change_to_scanner(false);
+  
+  Serial.println("mqtt_connect completed");
   
 //  mqtt.setCallback(callback);
 }
@@ -442,6 +446,7 @@ bool time_to_reboot(String reboot_time)
   if(time_str == reboot_time)
   {
   	int tmp_i;
+  	change_to_scanner(true);
     // wait until minute pass  
     for(tmp_i = 60; tmp_i > 0; tmp_i--)
     {
@@ -458,6 +463,8 @@ bool time_to_reboot(String reboot_time)
 
 void chp_init(bool en_log)
 {
+	Serial.println("chp_init");
+	change_to_scanner(true);
 	randomSeed(analogRead(0));
   
 	Serial.println(MODEL_NAME);
@@ -501,6 +508,9 @@ void chp_init(bool en_log)
   	}
   	Serial.println("Success, waiting for schedule");
   	mqtt_connect();
+  	
+	change_to_scanner(false);
+	Serial.println("chp_init completed");
 }
 
 bool time_to_sync()
@@ -676,4 +686,5 @@ int get_wifi_rssi()
     Serial.println(WiFi.RSSI());	
     return WiFi.RSSI();
 }
+
 

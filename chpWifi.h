@@ -24,6 +24,7 @@
 #define INTERVAL_LEN 10
 #define ROOM_NUM_LEN 32
 #define EEPROM_SIZE 512
+#define  MODE_PIN 19
 
 struct Mqtt_configs {
    String	mqtt_server;
@@ -51,5 +52,7 @@ void set_ota_pwd(String my_ota_pwd);
 void connect_to_myap(String my_ssid, String my_password);
 String get_room_num();
 void set_broker_connection(String my_server_url, String my_client_id, String my_token, String my_secret, int my_port, int my_interval);
+void change_to_scanner(bool cnt_mode);
+void set_mode_pin(int this_mode_pin);
 #endif
 

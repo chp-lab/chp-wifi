@@ -24,7 +24,7 @@ WebServer Server;
 
 const char* ap_ssid = "giant";
 const char* ap_pwd = "qwer!@34";
-const unsigned long ap_timeout = 2*60*1000;
+const unsigned long ap_timeout = 10*60*1000;
 
 AutoConnect       Portal(Server);
 AutoConnectConfig Config(ap_ssid, ap_pwd, ap_timeout);       // Enable autoReconnect supported on v0.9.4
@@ -52,6 +52,8 @@ int index_room_num_end = index_room_num + ROOM_NUM_LEN;
 
 bool __eprm_flag = false;
 bool __mqtt_flag = false;
+
+int mode_pin = MODE_PIN;
 
 AutoConnectAux    netpie("/netpie", "MQTT");   // Step #1 as the above procedure
 
@@ -268,9 +270,13 @@ void chp_wifi_begin()
 	
 	// Establish a connection with an autoReconnect option.
 	Serial.println("Connecting to WiFi...");
-//	digitalWrite(10, LOW);
+	
+	change_to_scanner(true);
+	
+	digitalWrite(10, LOW);
+	
 	if (Portal.begin()) 
-	{
+	{	
 		Serial.println("WiFi connected: " + WiFi.localIP().toString());
 		digitalWrite(10, HIGH);
 		String tmp_md_name;
@@ -529,4 +535,25 @@ void set_broker_connection(String my_server_url, String my_client_id, String my_
 	EEPROM_write(index_interval, String(my_interval));
 }
 
+void change_to_scanner(bool cnt_mode)
+{
+	pinMode(mode_pin, OUTPUT);
+	// if cnt_mode is true, switch to scanner
+	if(cnt_mode)
+	{
+		digitalWrite(mode_pin, LOW);
+		Serial.println("!!! Change to finger scan, mode pin= " + String(mode_pin));
+	}
+	else
+	{
+		digitalWrite(mode_pin, HIGH);
+		Serial.println("!!! Change to control box, mode pin= " + String(mode_pin));
+	}
+}
+
+void set_mode_pin(int this_mode_pin)
+{
+	mode_pin = this_mode_pin;
+	Serial.println("set mode_pin to " + String(mode_pin));
+}
 

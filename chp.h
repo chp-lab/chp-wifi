@@ -18,7 +18,7 @@
 #define MQTT_PASSWORD "atop3352"
 
 #define TOPIC "@msg/set/status/GfdHrdhgfIBMKGXBZt6nXkcw"
-#define MQTT_MAX_RECONNECT 3
+#define MQTT_MAX_RECONNECT 5
 #define NUM_PHASE 3
 #define INTERVAL 5*60*1000
 #define MAX_LEN 1000
