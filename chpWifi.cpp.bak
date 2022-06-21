@@ -325,7 +325,8 @@ void EEPROM_write(int index, String text)
 {
   for (int i = index; i < text.length() + index; i++) 
   {
-    EEPROM.put(i, text[i - index]);
+    // EEPROM.put(i, text[i - index]);
+	EEPROM.update(i, text[i - index]);
   }
     EEPROM.commit();
 }

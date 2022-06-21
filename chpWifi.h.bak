@@ -63,6 +63,5 @@ void change_to_scanner(bool cnt_mode);
 void set_mode_pin(int this_mode_pin);
 String get_ap_name();
 String get_mac();
-void eeprom_init();
 #endif
 
