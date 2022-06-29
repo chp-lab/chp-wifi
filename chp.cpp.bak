@@ -96,7 +96,6 @@ void mqtt_connect()
   
   change_to_scanner(false);
   
-  digitalWrite(build_in_led, HIGH);
   Serial.println("mqtt_connect completed");
   
 //  mqtt.setCallback(callback);

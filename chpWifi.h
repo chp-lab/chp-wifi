@@ -26,6 +26,7 @@
 #define EEPROM_SIZE 512
 #define CHP_EEPROM_SCOPE 400
 #define  MODE_PIN 19
+#define AP_PWD_FK "farmkids"
 
 #if defined(ARDUINO_ARCH_ESP8266)
 #define sudo_reboot() ESP.reset()
@@ -64,5 +65,6 @@ void set_mode_pin(int this_mode_pin);
 String get_ap_name();
 String get_mac();
 void eeprom_init();
+void reset_wifi_con();
 #endif
 

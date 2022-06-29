@@ -8,7 +8,7 @@
 #include "chpWifi.h"
 
 #define MODEL_NAME "STD2022"
-#define FW_VERSION "FW Version 2.1.0"
+#define FW_VERSION "FW Version 2.2.0"
 #define WIFI_TIMEOUT 60*1000
 
 //#define MQTT_SERVER "172.31.0.99"
@@ -33,6 +33,7 @@
 #define RT_TOPIC "rt_req"
 
 #define OTA_PWD "admin"
+#define build_in_led 2
 
 void callback(char* topic, byte* payload, unsigned int length) ;
 void pubData(String payload, String topic);

@@ -23,8 +23,8 @@ WebServer Server;
 #endif
 
 const char* ap_ssid = "Farmkids-AP";
-const char* ap_pwd = "qwer!@34";
-const unsigned long ap_timeout = 1*60*1000;
+const char* ap_pwd = AP_PWD_FK;
+const unsigned long ap_timeout = 10*60*1000;
 
 AutoConnect       Portal(Server);
 AutoConnectConfig Config(ap_ssid, ap_pwd, ap_timeout);       // Enable autoReconnect supported on v0.9.4
@@ -227,7 +227,7 @@ void chp_wifi_begin()
 {
 	// Enable saved past credential by autoReconnect option,
 	// even once it is disconnected.
-	Config.autoReconnect = true;
+	Config.autoReconnect = false;
 //	Config.portalTimeout = 3000;
 	/*Http Authentication*/
 //	Config.auth = AC_AUTH_DIGEST;
@@ -240,8 +240,9 @@ void chp_wifi_begin()
 //		Serial.println("!!! ble wifi config found!");
 //	}
 //	// Check any setting available
+	
 	Config.apid = "Farmkids-AP-" + get_ap_name();
-	Config.password = "farmkids";
+//	Config.password = "farmkids";
 	
 //	Serial.println("AP SSID:" + String(Config.apid));
 	
@@ -620,4 +621,12 @@ void eeprom_init() {
 		Serial.println("eeprom_init...");
 		__eprm_flag = true;
 	}
+}
+
+void reset_wifi_con() {
+	Serial.println("Disconnect old WiFi...");
+	delay(500);
+	WiFi.disconnect(true);
+	delay(500);
+	Serial.println("WiFi disconnected.");
 }
