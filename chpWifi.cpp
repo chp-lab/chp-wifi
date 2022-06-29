@@ -227,7 +227,7 @@ void chp_wifi_begin()
 {
 	// Enable saved past credential by autoReconnect option,
 	// even once it is disconnected.
-	Config.autoReconnect = false;
+	Config.autoReconnect = true;
 //	Config.portalTimeout = 3000;
 	/*Http Authentication*/
 //	Config.auth = AC_AUTH_DIGEST;
@@ -626,7 +626,18 @@ void eeprom_init() {
 void reset_wifi_con() {
 	Serial.println("Disconnect old WiFi...");
 	delay(500);
+	
 	WiFi.disconnect(true);
+	WiFi.begin("0","0");
+	
+	// Portal.end();
+	Serial.print("Old ssid:");
+	Serial.println( WiFi.SSID() );
+	Serial.print("Old password:");
+	Serial.println( WiFi.psk() );
 	delay(500);
 	Serial.println("WiFi disconnected.");
+	Serial.println("Factory reset complete!");
+	ESP.restart();
+    delay(1000);
 }
