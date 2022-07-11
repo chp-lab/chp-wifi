@@ -10,6 +10,7 @@
 #include <WebServer.h>
 #include <ESPmDNS.h>
 #include <HTTPClient.h>
+#include <HTTPUpdate.h>
 #endif
 #include <time.h>
 #include <AutoConnect.h>
@@ -27,6 +28,7 @@
 #define CHP_EEPROM_SCOPE 400
 #define  MODE_PIN 19
 #define AP_PWD_FK "farmkids"
+#define WIFI_CONF_V "1.4.11"
 
 #if defined(ARDUINO_ARCH_ESP8266)
 #define sudo_reboot() ESP.reset()
@@ -66,5 +68,8 @@ String get_ap_name();
 String get_mac();
 void eeprom_init();
 void reset_wifi_con();
+void deleteAllCredentials();
+String onUpdate(AutoConnectAux& aux, PageArgument& args);
+void apt_update();
 #endif
 

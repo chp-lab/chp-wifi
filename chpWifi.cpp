@@ -26,8 +26,41 @@ const char* ap_ssid = "Farmkids-AP";
 const char* ap_pwd = AP_PWD_FK;
 const unsigned long ap_timeout = 10*60*1000;
 
+static const char OTA[] PROGMEM = R"(
+[
+  {
+    "title": "Update",
+    "uri": "/update",
+    "menu": true,
+    "element": [
+      {
+        "name": "chk",
+        "type": "ACSubmit",
+        "value": "Check Update",
+        "uri": "/chk"
+      }
+    ]
+  },
+  {
+    "title": "Update",
+    "uri": "/chk",
+    "menu": false,
+    "element": [
+      {
+        "name": "res",
+        "type": "ACText"
+      }
+    ]
+  }
+]
+)";
+
 AutoConnect       Portal(Server);
 AutoConnectConfig Config(ap_ssid, ap_pwd, ap_timeout);       // Enable autoReconnect supported on v0.9.4
+const char* updateServerUrl = "gravity.giantiot.com";
+const int   updateServerPort = 8000;
+const char* updateFirmware = "/firmware_pro.bin";
+AutoConnectUpdate update(updateServerUrl, updateServerPort);
 AutoConnectAux    Timezone;
 
 int index_server_url = URL_START;    
@@ -150,7 +183,7 @@ void rootPage()
           "</script>"
       "</head>"
       "<body>"
-          "<h2 align=\"center\" style=\"color:blue;margin:20px;\">GIANT</h2>"
+          "<h2 align=\"center\" style=\"color:blue;margin:20px;\">WiFi Setup V" WIFI_CONF_V "</h2>"
           "<h3 align=\"center\" style=\"color:gray;margin:10px;\">{{DateTime}}</h3>"
           "<p style=\"text-align:center;\">"+ __home_status +"</p>"
 			"<form action=\"/_ac/connect\" align=\"center\" style=\"color:blue;margin:20px;>"
@@ -242,6 +275,8 @@ void chp_wifi_begin()
 //	// Check any setting available
 	
 	Config.apid = "Farmkids-AP-" + get_ap_name();
+	Config.autoRise = true; // It's the default, no setting is needed explicitly.
+	Config.retainPortal = true;
 //	Config.password = "farmkids";
 	
 //	Serial.println("AP SSID:" + String(Config.apid));
@@ -282,6 +317,8 @@ void chp_wifi_begin()
 	
 	if (Portal.begin()) 
 	{	
+		update.attach(Portal);
+		Portal.on("/chk", onUpdate);
 		Serial.println("WiFi connected: " + WiFi.localIP().toString());
 		digitalWrite(wifi_led_pin, HIGH);
 		String tmp_md_name;
@@ -290,6 +327,7 @@ void chp_wifi_begin()
 		WiFi.macAddress(tmp_mac);
   		Serial.print("MAC: ");
   		
+		/*
   		for(int i = 0; i < mac_len; i++ )
   		{
     		char tmp_buf[mac_len];
@@ -298,6 +336,10 @@ void chp_wifi_begin()
     		tmp_md_name = tmp_md_name + tmp_buf;
     		tmp_md_name.replace(" ", "0");
   		}
+		*/
+		tmp_md_name = get_ap_name();
+		Serial.println("MDNS Started with name:" + tmp_md_name);
+		
   		Serial.println(tmp_md_name);
 		if (MDNS.begin(tmp_md_name.c_str())) 
 		{
@@ -628,16 +670,67 @@ void reset_wifi_con() {
 	delay(500);
 	
 	WiFi.disconnect(true);
+	deleteAllCredentials();
 	WiFi.begin("0","0");
-	
-	// Portal.end();
-	Serial.print("Old ssid:");
-	Serial.println( WiFi.SSID() );
-	Serial.print("Old password:");
-	Serial.println( WiFi.psk() );
+//	Serial.print("Old ssid:");
+//	Serial.println( WiFi.SSID() );
+//	Serial.print("Old password:");
+//	Serial.println( WiFi.psk() );
 	delay(500);
 	Serial.println("WiFi disconnected.");
+	
 	Serial.println("Factory reset complete!");
+	delay(500);
 	ESP.restart();
     delay(1000);
 }
+
+void deleteAllCredentials() {
+  AutoConnectCredential credential;
+  station_config_t config;
+  uint8_t ent = credential.entries();
+
+  Serial.println("AutoConnectCredential deleting");
+  if (ent)
+    Serial.printf("Available %d entries.\n", ent);
+  else {
+    Serial.println("No credentials saved.");
+    return;
+  }
+
+  while (ent) {
+    credential.load((int8_t)0, &config);
+//	Serial.println(String((const char*)config.ssid) + " record detected");
+//	Serial.printf("%s record.\n", (const char*)config.ssid);
+	
+   if (credential.del((const char*)&config.ssid[0])) {
+      Serial.printf("%s deleted.\n", (const char*)config.ssid);
+	}
+    else {
+		Serial.printf("%s failed to delete.\n", (const char*)config.ssid);
+	}
+	ent = ent - 1;
+  }
+}
+
+String onUpdate(AutoConnectAux& aux, PageArgument& args) {
+  aux["res"].value = "Updating...";
+  return String();
+}
+
+void apt_update() {
+	WiFiClient  u_client;
+	t_httpUpdate_return ret = httpUpdate.update(u_client, updateServerUrl, updateServerPort, updateFirmware);
+	switch (ret) {
+    case HTTP_UPDATE_FAILED:
+      Serial.printf("HTTP_UPDATE_FAILED Error (%d): %s\n", httpUpdate.getLastError(), httpUpdate.getLastErrorString().c_str());
+      break;
+    case HTTP_UPDATE_NO_UPDATES:
+      Serial.println("HTTP_UPDATE_NO_UPDATES");
+      break;
+    case HTTP_UPDATE_OK:
+      Serial.println("HTTP_UPDATE_OK");
+      break;
+    }
+}
+

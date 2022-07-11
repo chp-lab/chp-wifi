@@ -65,25 +65,38 @@ void mqtt_connect()
   Serial.println("Connecting to mqtt broker: " + mqtt_server);
   // tempolary
   change_to_scanner(true);
+  digitalWrite(build_in_led, LOW);
+  Serial.println("Turn off buildin led to be signaling.");
+  is_fact_reset(100);
+  
   
   while(!mqtt.connect(client_name.c_str(), mqtt_username.c_str(), mqtt_password.c_str()))
   {
+	if(WiFi.status() == WL_DISCONNECTED) {
+		Serial.println("WiFi lost connection");
+		WiFi.reconnect();
+	}
   	get_wifi_rssi();
 	Serial.println("Turn off buildin led.");
   	digitalWrite(build_in_led, LOW);
   	set_mqtt_flag(false);
   	chp_wifi_handle();
+	Serial.print("failed, rc=");
+	Serial.println(mqtt.state());
     Serial.print("*.Retry...");
-    count = count + 1;
+	
+	is_fact_reset(100);
+    
+	count = count + 1;
     if(count > mqtt_max_reconnect)
     {
         Serial.println("Internet connection failed, restarting device...");
         sudo_reboot();
     }
-    delay(1000);
+    delay(500);
 	Serial.println("Turn on buildin led.");
     digitalWrite(build_in_led, HIGH);
-    delay(1000);
+    delay(500);
   }
   set_mqtt_flag(true);
   Serial.println("Mqtt connected");
@@ -96,6 +109,7 @@ void mqtt_connect()
   
   change_to_scanner(false);
   
+  digitalWrite(build_in_led, HIGH);
   Serial.println("mqtt_connect completed");
   
 //  mqtt.setCallback(callback);
@@ -103,8 +117,8 @@ void mqtt_connect()
 
 void giantOta()
 {
-    Serial.println("Starting ota...");
-    ArduinoOTA.setHostname(get_client_name().c_str());
+    Serial.println("Starting ota server name..." + String(get_ap_name()));
+    ArduinoOTA.setHostname(get_ap_name().c_str());
     ArduinoOTA.setPassword(ota_pwd.c_str());
     ArduinoOTA.onStart([]() 
     {
@@ -538,12 +552,12 @@ void listen_for_fw()
 void chp_loop()
 {
 	time_elapsed = millis() - last_wake_up;
+	mqtt.loop();
     if(!mqtt.connected())
     {
       	Serial.println("On idel state, mqtt client not connect");
       	mqtt_connect();
     }
-    mqtt.loop();
 }
 
 bool time_to_send()
@@ -687,6 +701,41 @@ int get_wifi_rssi()
     Serial.print("RRSI: ");
     Serial.println(WiFi.RSSI());	
     return WiFi.RSSI();
+}
+
+void is_fact_reset(int d_before_rest)
+{
+	
+  int wifi_reset_presed = digitalRead(WIFI_RESET_BTN);
+//  Serial.println(wifi_reset_presed);
+  if(wifi_reset_presed == 0) {
+//    reset_wifi_con();
+    Serial.println("Factory reset pressed, wait 5 sec...");
+    delay(d_before_rest);
+    wifi_reset_presed = digitalRead(WIFI_RESET_BTN);
+    if(wifi_reset_presed == 0) {
+      Serial.println("WiFi Reset pressed!");
+      reset_wifi_con();
+      delay(1000);
+    }
+    else {
+      Serial.println("Button released before 5 sec. No factory reset.");
+    }
+  }
+  
+  int kb_reset_pressed = digitalRead(SW1);
+  if(kb_reset_pressed == 0) {
+    Serial.println("Kidbright factory reset pressed, wait 5 sec...");
+    delay(5000);
+    kb_reset_pressed = digitalRead(SW1);
+    if(kb_reset_pressed == 0) {
+      Serial.println("WiFi Reset pressed!");
+      reset_wifi_con();
+    }
+    else {
+      Serial.println("Button released before 5 sec. No factory reset.");
+    }
+  }
 }
 
 

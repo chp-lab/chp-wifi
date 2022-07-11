@@ -8,7 +8,7 @@
 #include "chpWifi.h"
 
 #define MODEL_NAME "STD2022"
-#define FW_VERSION "FW Version 2.2.0"
+#define FW_VERSION "FW Version " WIFI_CONF_V
 #define WIFI_TIMEOUT 60*1000
 
 //#define MQTT_SERVER "172.31.0.99"
@@ -34,6 +34,10 @@
 
 #define OTA_PWD "admin"
 #define build_in_led 2
+
+#define WIFI_RESET_BTN 15
+#define SW1 16
+#define SW2 14
 
 void callback(char* topic, byte* payload, unsigned int length) ;
 void pubData(String payload, String topic);
@@ -67,5 +71,6 @@ String get_time_format();
 String get_date_fmrt();
 int get_days();
 int get_wifi_rssi();
+void is_fact_reset(int d_before_rest);
 #endif
 
