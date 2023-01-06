@@ -28,7 +28,11 @@
 #define CHP_EEPROM_SCOPE 400
 #define  MODE_PIN 19
 #define AP_PWD_FK "farmkids"
-#define WIFI_CONF_V "1.4.11"
+#define WIFI_CONF_V "1.4.16"
+#define ota_fw_name "/firmware_pro.bin"
+#define ota_port 8000
+#define ota_server_uri "gravity.giantiot.com"
+
 
 #if defined(ARDUINO_ARCH_ESP8266)
 #define sudo_reboot() ESP.reset()
@@ -71,5 +75,7 @@ void reset_wifi_con();
 void deleteAllCredentials();
 String onUpdate(AutoConnectAux& aux, PageArgument& args);
 void apt_update();
+void apt_update(const char* uuri, const int uuport, const char* ufw_name);
+void set_ap_prefix(String this_prefix);
 #endif
 

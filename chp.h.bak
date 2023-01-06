@@ -71,6 +71,6 @@ String get_time_format();
 String get_date_fmrt();
 int get_days();
 int get_wifi_rssi();
-void is_fact_reset();
+void is_fact_reset(int d_before_rest);
 #endif
 

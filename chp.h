@@ -72,5 +72,6 @@ String get_date_fmrt();
 int get_days();
 int get_wifi_rssi();
 void is_fact_reset(int d_before_rest);
+void sub_data(String topic, int QoS);
 #endif
 

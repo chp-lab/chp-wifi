@@ -737,4 +737,9 @@ void is_fact_reset(int d_before_rest)
   }
 }
 
+void sub_data(String topic, int QoS) {
+	Serial.println("Sub data: " + topic + " QoS=" + String(QoS));
+	mqtt.subscribe(topic.c_str(), QoS);
+}
+
 

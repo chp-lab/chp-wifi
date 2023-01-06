@@ -24,7 +24,8 @@ WebServer Server;
 
 const char* ap_ssid = "Farmkids-AP";
 const char* ap_pwd = AP_PWD_FK;
-const unsigned long ap_timeout = 5*60*1000;
+const unsigned long ap_timeout = 10*60*1000;
+String ap_prefix = "Farmkids-AP-";
 
 static const char OTA[] PROGMEM = R"(
 [
@@ -57,9 +58,9 @@ static const char OTA[] PROGMEM = R"(
 
 AutoConnect       Portal(Server);
 AutoConnectConfig Config(ap_ssid, ap_pwd, ap_timeout);       // Enable autoReconnect supported on v0.9.4
-const char* updateServerUrl = "gravity.giantiot.com";
-const int   updateServerPort = 8000;
-const char* updateFirmware = "/firmware_pro.bin";
+char* updateServerUrl = ota_server_uri;
+const int   updateServerPort = ota_port;
+char* updateFirmware = ota_fw_name;
 AutoConnectUpdate update(updateServerUrl, updateServerPort);
 AutoConnectAux    Timezone;
 
@@ -274,7 +275,7 @@ void chp_wifi_begin()
 //	}
 //	// Check any setting available
 	
-	Config.apid = "Farmkids-AP-" + get_ap_name();
+	Config.apid = ap_prefix + get_ap_name();
 	Config.autoRise = true; // It's the default, no setting is needed explicitly.
 	Config.retainPortal = true;
 //	Config.password = "farmkids";
@@ -733,4 +734,27 @@ void apt_update() {
       break;
     }
 }
+
+void apt_update(const char* uuri, const int uuport, const char* ufw_name) {
+	WiFiClient  u_client;
+	t_httpUpdate_return ret = httpUpdate.update(u_client, uuri, uuport, ufw_name);
+	switch (ret) {
+    case HTTP_UPDATE_FAILED:
+      Serial.printf("HTTP_UPDATE_FAILED Error (%d): %s\n", httpUpdate.getLastError(), httpUpdate.getLastErrorString().c_str());
+      break;
+    case HTTP_UPDATE_NO_UPDATES:
+      Serial.println("HTTP_UPDATE_NO_UPDATES");
+      break;
+    case HTTP_UPDATE_OK:
+      Serial.println("HTTP_UPDATE_OK");
+      break;
+    }
+}
+
+void set_ap_prefix(String this_prefix) {
+	ap_prefix = "KEPTBOX-";
+}
+
+
+
 

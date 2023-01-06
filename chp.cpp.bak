@@ -69,7 +69,6 @@ void mqtt_connect()
   Serial.println("Turn off buildin led to be signaling.");
   is_fact_reset(100);
   
-  
   while(!mqtt.connect(client_name.c_str(), mqtt_username.c_str(), mqtt_password.c_str()))
   {
 	if(WiFi.status() == WL_DISCONNECTED) {
@@ -736,6 +735,11 @@ void is_fact_reset(int d_before_rest)
       Serial.println("Button released before 5 sec. No factory reset.");
     }
   }
+}
+
+void sub_data(String topic, int QoS) {
+	Serial.println("Sub data: " + topic_str + " QoS=" + String(QoS));
+	mqtt.subscribe(topic.c_str(), QoS);
 }
 
 
