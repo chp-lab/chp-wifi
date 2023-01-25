@@ -721,7 +721,7 @@ void is_fact_reset(int d_before_rest)
       Serial.println("Button released before 5 sec. No factory reset.");
     }
   }
-  
+  /*
   int kb_reset_pressed = digitalRead(SW1);
   if(kb_reset_pressed == 0) {
     Serial.println("Kidbright factory reset pressed, wait 5 sec...");
@@ -735,6 +735,7 @@ void is_fact_reset(int d_before_rest)
       Serial.println("Button released before 5 sec. No factory reset.");
     }
   }
+  */
 }
 
 void sub_data(String topic, int QoS) {
