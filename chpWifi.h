@@ -27,7 +27,7 @@
 #define EEPROM_SIZE 512
 #define CHP_EEPROM_SCOPE 400
 #define  MODE_PIN 19
-#define AP_PWD_FK "farmkids"
+#define AP_PWD_FK "administrator"
 #define WIFI_CONF_V "1.4.16"
 #define ota_fw_name "/firmware_pro.bin"
 #define ota_port 8100

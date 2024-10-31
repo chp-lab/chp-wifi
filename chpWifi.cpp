@@ -22,10 +22,10 @@ ESP8266WebServer Server;
 WebServer Server;
 #endif
 
-const char* ap_ssid = "Farmkids-AP";
+const char* ap_ssid = "ESP-AP";
 const char* ap_pwd = AP_PWD_FK;
 const unsigned long ap_timeout = 10*60*1000;
-String ap_prefix = "Farmkids-AP-";
+String ap_prefix = "ESP-AP-";
 
 static const char OTA[] PROGMEM = R"(
 [
@@ -383,7 +383,7 @@ String EEPROM_read(int index, int read_end)
       text.concat(ch);
     }
   }
-  text.replace("ÿ", "");
+  text.replace("ï¿½", "");
   return text;
 }
 
