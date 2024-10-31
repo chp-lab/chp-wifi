@@ -7,7 +7,7 @@
 #include <Time.h>
 #include "chpWifi.h"
 
-#define MODEL_NAME "STD2022"
+#define MODEL_NAME "v2024_1"
 #define FW_VERSION "FW Version " WIFI_CONF_V
 #define WIFI_TIMEOUT 60*1000
 
