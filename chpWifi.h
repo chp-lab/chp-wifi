@@ -30,8 +30,8 @@
 #define AP_PWD_FK "farmkids"
 #define WIFI_CONF_V "1.4.16"
 #define ota_fw_name "/firmware_pro.bin"
-#define ota_port 8000
-#define ota_server_uri "gravity.giantiot.com"
+#define ota_port 8100
+#define ota_server_uri "giantiot.com"
 
 
 #if defined(ARDUINO_ARCH_ESP8266)
